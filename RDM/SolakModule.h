@@ -1,6 +1,7 @@
 #ifndef SOLAKMODULE_H
 #define SOLAKMODULE_H
 
+
 #include<opencv2\opencv.hpp>
 #include <Windows.h>
 #include<stdint.h>
@@ -11,6 +12,8 @@
 #include <string>
 #include <SDL.h>
 #include <SDL_image.h>
+#include "Timer.h"
+#include "DataHandler.h"
 
 
 using namespace cv;
@@ -23,12 +26,14 @@ class SolakModule
 public:
 	SolakModule();
 	~SolakModule();
-	void Update(Mat1b Screenshot, unsigned int Damage, Mat1b ChatScreen);
+	void SaveFight();
+	void Update(Mat1b& Screenshot, unsigned int Damage, Mat1b& ChatScreen);
 	void Reset(); //Resets all values to default
 	void SetBaseDamage(unsigned int Damage) { m_BaseDamage = Damage; };
 	void ReportDamage(); //Reports the damage from the encounter
 	void SetDuoActive(bool status) { m_DuoActive = status; };
 	bool GetFightEnded() { return m_FightEnded; };
+	bool GetFightStarted() { return m_FightStarted; };
 
 	
 
@@ -45,6 +50,7 @@ private:
 	unsigned int m_BaseDamage; //The damage value before the encounter has begun
 	unsigned int m_TotalDamage; //Total damage dealt throughout the encounter
 	unsigned int m_TempDamage; //Used to store values temporarily
+	unsigned int m_BestCompareDamage; //Damage value used to compare best log, ignores P4 Damage to mitigat Tank/DPS role damage differences
 	unsigned int m_DamageLastCheckpoint;
 	//Phase 1 integers
 	unsigned int m_P1Damage[4]; //The damage value dealt to Solak in up to 4 iterations of Phase 1
@@ -60,6 +66,7 @@ private:
 
 	//Phase 2 integers
 	unsigned int m_P2Damage;
+	unsigned int m_P2StormDamage;
 
 	//Phase 3 integers
 	unsigned int m_P3Damage;
@@ -73,6 +80,7 @@ private:
 	string m_StrArmsDamage[4];
 	string m_StrLegsDamage[4];
 	string m_StrCoreDamage[4];
+	string m_StrP2StormDamage;
 	string m_StrP2Damage;
 	string m_StrP3Damage;
 	string m_StrP4Damage;
@@ -89,6 +97,7 @@ private:
 	bool m_CoreActive = false;
 
 	bool m_Phase2Active = false;
+	bool m_BlightStormEnded = false;
 	bool m_Phase3Active = false;
 	bool m_Phase4Active = false;
 	bool m_FightEnded = false;
@@ -101,6 +110,7 @@ private:
 	WindowText TextSolakDuoActive;
 	WindowText TextSolakTeamActive;
 	WindowText TextSolakReportHeader;
+	/*
 	WindowText TextSolakReportHeader2;
 	WindowText TextSolakTotalDamage;
 	WindowText TextSolakArms;
@@ -111,7 +121,9 @@ private:
 	WindowText TextSolakPhase3;
 	WindowText TextSolakPhase4;
 	WindowText TextSolakRoots;
+	*/
 	WindowText TextSolakPhase1Total;
+
 	WindowText TextSolakLegsTotal;
 	WindowText TextSolakArmsTotal;
 	WindowText TextSolakCoreTotal;
@@ -123,6 +135,7 @@ private:
 	WindowText TextSolakLegsDmg[4];
 	WindowText TextSolakCoreDmg[4];
 	WindowText TextSolakP2Dmg;
+	WindowText TextSolakStormDmg;
 	WindowText TextSolakP3Dmg;
 	WindowText TextSolakP4Dmg;
 	WindowText TextSolakP1TotalDmg;
@@ -131,10 +144,11 @@ private:
 	WindowText TextSolakDmg;
 
 	//Ally variables
-	WindowText TextAllyP1Dmg;
+	WindowText TextAllyP1Dmg[2];
 	WindowText TextAllyArmsDmg[4];
 	WindowText TextAllyLegsDmg[4];
-	WindowText TextAllyCoreDmg;
+	WindowText TextAllyCoreDmg[2];
+	WindowText TextAllyStormDmg;
 	WindowText TextAllyP2Dmg;
 	WindowText TextAllyP3Dmg;
 	WindowText TextAllyP4Dmg;
@@ -143,27 +157,40 @@ private:
 	WindowText TextAllyLegsTotal;
 	WindowText TextAllyCoreTotal;
 
-	string m_StrAllyP1Dmg;
+	string m_StrAllyP1Dmg[2];
 	string m_StrAllyArmsDmg[4];
 	string m_StrAllyLegsDmg[4];
-	string m_StrAllyCoreDmg;
+	string m_StrAllyCoreDmg[2];
+	string m_StrAllyStormDmg;
 	string m_StrAllyP2Dmg;
 	string m_StrAllyP3Dmg;
 	string m_StrAllyP4Dmg;
 	string m_StrAllyDmgTotal;
 	string m_StrAllyArmsDmgTotal;
 	string m_StrAllyLegsDmgTotal;
+	string m_StrBestDmg;
 
-	int m_AllyP1Dmg;
+	int m_AllyP1Dmg[2];
 	int m_AllyArmsDmg[4];
 	int m_AllyLegsDmg[4];
-	int m_AllyCoreDmg;
+	int m_AllyCoreDmg[2];
+	int m_AllyStormDmg;
 	int m_AllyP2Dmg;
 	int m_AllyP3Dmg;
 	int m_AllyP4Dmg;
 	int m_AllyDmgTotal;
 	int m_AllyArmsDmgTotal;
 	int m_AllyLegsDmgTotal;
+	int m_AllyBestDmg;
+
+	int m_AllyP1Bar[2];
+	int m_AllyArmBar[2];
+	int m_AllyLegBar[2];
+	int m_AllyCoreBar[2];
+	int m_AllyStormBar;
+	int m_AllyP2Bar;
+	int m_AllyP3Bar;
+	int m_AllyP4Bar;
 
 	bool m_DuoActive = false;
 	bool m_TeamActive = false;
@@ -189,6 +216,49 @@ private:
 	int m_TeamP2Health = 3000000;
 	int m_TeamP3Health = 3000000;
 	int m_TeamP4Health = 700000;
+
+	Timer m_SolakTimer;
+	double m_P1EndTime;
+	double m_P2StormEnd;
+	double m_P2EndTime;
+	double m_P3EndTime;
+	double m_P4EndTime;
+
+	WindowRect m_SolakP1Bar[4];
+	WindowRect m_SolakArmBar[4];
+	WindowRect m_SolakLegBar[4];
+	WindowRect m_SolakCoreBar[4];
+	WindowRect m_SolakBlightBar;
+	WindowRect m_SolakP2Bar;
+	WindowRect m_SolakP3Bar;
+	WindowRect m_SolakP4Bar;
+
+	WindowRect m_AllyP1BarImg[2];
+	WindowRect m_AllyArmBarImg[2];
+	WindowRect m_AllyLegBarImg[2];
+	WindowRect m_AllyCoreBarImg[2];
+	WindowRect m_AllyStormBarImg;
+	WindowRect m_AllyP2BarImg;
+	WindowRect m_AllyP3BarImg;
+	WindowRect m_AllyP4BarImg;
+
+	int m_DeathCheckCounter = 0;
+	
+	int BarLength;
+
+	void WipeBarsAndValues();
+	void ReportPhase1();
+	void ReportPhase2();
+	void ReportPhase3();
+	void ReportPhase4();
+	void ReportBestFight();
+	void ReportStormPhase();
+	void ParseBest();
+	void CompareBest();
+	void SaveBest();
+
+	DataHandler m_SolakData;
+	string m_SolakBestString;
 	
 };
 

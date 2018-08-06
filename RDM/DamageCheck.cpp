@@ -14,16 +14,21 @@ DamageCheck::~DamageCheck()
 {
 }
 
-unsigned int DamageCheck::GetDamage(Mat1b Source)
+unsigned int DamageCheck::GetDamage(Mat1b& Source)
 {
-
+	m_DamageValsCount = 100; //Resets the damage values count every time this function is called to an arbitrary nonsense value so the true value can be established
 	m_DamageFramesCounter++;
 
 	//Going to loop over every character in the image until we reach the end to establish how many characters there are
 	// If we get to the number 14 something has gone wrong as we have surpassed 10 Billion damage which shouldn't be possible (2.5B limit)
 	for (int a = 0; a < 14; a++)
 	{
-
+		if (a == 13)
+		{
+			cout << "We should have flagged area /n";
+			m_LostDamageArea = true;
+			break;
+		}
 		//cout << m_DmgRect.x + (a*m_DmgRect.width);
 
 		m_DmgCrops[a] = (Source(Rect(m_DmgRect.x + (a*m_DmgRect.width) + a, m_DmgRect.y, m_DmgRect.width, m_DmgRect.height)));
@@ -46,43 +51,59 @@ unsigned int DamageCheck::GetDamage(Mat1b Source)
 	{
 	case 11:
 		HundredMillions(Source);
+		m_LostDamageArea = false;
 		break;
 	case 1:
 		Units(Source);
+		m_LostDamageArea = false;
 		break;
 	case 2:
 		Tens(Source);
+		m_LostDamageArea = false;
 		break;
 	case 3:
 		Hundreds(Source);
+		m_LostDamageArea = false;
 		break;
 	case 5:
 		Thousands(Source);
+		m_LostDamageArea = false;
 		break;
 	case 6:
 		TenThousands(Source);
+		m_LostDamageArea = false;
 		break;
 	case 7:
 		HundredThousands(Source);
+		m_LostDamageArea = false;
 		break;
 	case 8:
 		Millions(Source);
+		m_LostDamageArea = false;
 		break;
 	case 9:
-		TenMillions(Source);
+		Millions(Source);
+		m_LostDamageArea = false;
 		break;
 	case 10:
 		HundredMillions(Source);
+		m_LostDamageArea = false;
 		break;
 	default:
-		cout << "Ruh roh";
+		cout << "Damage area was lost \n";
+		m_LostDamageArea = true;
 	}
 
+	if (m_TotalDamage == 0)
+	{
+		m_LostDamageArea = true; //Safeguards against errors, if the value returned is zero then it will assume the damage window has moved slightly and needs to be recalculated
+	}
+	Source.release();
 	return m_TotalDamage;
 }
 
 
-void DamageCheck::Units(Mat1b Source)
+void DamageCheck::Units(Mat1b& Source)
 {
 	m_TotalDamage = 0;
 
@@ -99,7 +120,7 @@ void DamageCheck::Units(Mat1b Source)
 	cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
-void DamageCheck::Tens(Mat1b Source)
+void DamageCheck::Tens(Mat1b& Source)
 {
 	m_TotalDamage = 0;
 
@@ -123,7 +144,7 @@ void DamageCheck::Tens(Mat1b Source)
 	
 }
 
-void DamageCheck::Hundreds(Mat1b Source)
+void DamageCheck::Hundreds(Mat1b& Source)
 {
 	m_TotalDamage = 0;
 
@@ -148,7 +169,7 @@ void DamageCheck::Hundreds(Mat1b Source)
 	cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
-void DamageCheck::Thousands(Mat1b Source)
+void DamageCheck::Thousands(Mat1b& Source)
 {
 	m_TotalDamage = 0;
 
@@ -178,7 +199,7 @@ void DamageCheck::Thousands(Mat1b Source)
 	cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
-void DamageCheck::TenThousands(Mat1b Source)
+void DamageCheck::TenThousands(Mat1b& Source)
 {
 	m_TotalDamage = 0;
 
@@ -210,7 +231,7 @@ void DamageCheck::TenThousands(Mat1b Source)
 	cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
-void DamageCheck::HundredThousands(Mat1b Source)
+void DamageCheck::HundredThousands(Mat1b& Source)
 {
 	m_TotalDamage = 0;
 
@@ -247,7 +268,7 @@ void DamageCheck::HundredThousands(Mat1b Source)
 	cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
-void DamageCheck::Millions(Mat1b Source)
+void DamageCheck::Millions(Mat1b& Source)
 {
 	m_TotalDamage = 0;
 
@@ -291,10 +312,11 @@ void DamageCheck::Millions(Mat1b Source)
 		m_DamageFramesCounter = 0;
 		cout << "Total damage is: " << m_TotalDamage << "\n";
 	}
+	Source.release();
 
 }
 
-void DamageCheck::TenMillions(Mat1b Source)
+void DamageCheck::TenMillions(Mat1b& Source)
 {
 	m_TotalDamage = 0;
 
@@ -341,7 +363,7 @@ void DamageCheck::TenMillions(Mat1b Source)
 
 
 
-void DamageCheck::HundredMillions(Mat1b Source)
+void DamageCheck::HundredMillions(Mat1b& Source)
 {
 	m_TotalDamage = 0;
 
@@ -385,7 +407,7 @@ void DamageCheck::HundredMillions(Mat1b Source)
 	cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
-int DamageCheck::IdentifyNumber(Mat1b NumberImg)
+int DamageCheck::IdentifyNumber(Mat1b& NumberImg)
 {
 
 	int IdentifiedNumber = 22;

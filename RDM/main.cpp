@@ -1,3 +1,5 @@
+
+
 #include<opencv2\opencv.hpp>
 #include <Windows.h>
 #include<stdint.h>
@@ -12,6 +14,14 @@
 #include "WindowRect.h"
 #include "WindowText.h"
 #include <string>
+#include "DataHandler.h"
+#include "Timer.h"
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h>
+
+
+
 
 
 const int SCREEN_WIDTH = 300;
@@ -31,17 +41,20 @@ const int fps = 40;
 
 bool BossActive = false;
 bool SolakActive = false;
+bool SolakGroupActive = false;
 
 ImageSetup ImageStore;
 TemplateMatcher TemplateMatch;
 SolakModule Solak;
+
 
 bool BossActiveCheck(Mat1b Screenshot)
 {
 	if (TemplateMatch.GetMatch(Screenshot, ImageStore.GetSolakTagA(), 0.9f))
 	{
 		BossActive = true;
-		SolakActive = true;
+		SolakActive = false;
+		SolakGroupActive = true;
 		cout << "We're gonna fight Solak! \n";
 		Solak.Reset();
 		Solak.SetDuoActive(false);
@@ -51,6 +64,7 @@ bool BossActiveCheck(Mat1b Screenshot)
 	{
 		BossActive = true;
 		SolakActive = true;
+		SolakGroupActive = false;
 		cout << "We're gonna fight Solak! \n";
 		Solak.Reset();
 		Solak.SetDuoActive(true);
@@ -64,25 +78,37 @@ bool BossActiveCheck(Mat1b Screenshot)
 
 int main()
 {
-	
+	/*
 	HWND hwnd = GetConsoleWindow();
 	ShowWindow(hwnd, 0);
+	*/
 	//Hides the console window :D
 
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	Window window(WindowName, 800, 700);
+
+	//_CrtSetBreakAlloc(153);
+
+	DataHandler SolakData;
+	SolakData.Start();
+
+	Timer StopWatch;
+	StopWatch.Start();
 
 
 	ScreenCapture Screener;
 
 	DamageCheck DmgCheck;
 	unsigned int BossStartingDamage;
-	unsigned int Damage;
+	unsigned int Damage = 0;
 	unsigned int DamageLastFrame;
 	string DamageString = "0";
 	string ArialFont = "Images/Fonts/arial.ttf";
 
-	Mat Screenshot;
-	Mat1b ScreenshotGray;
+	int DamageStringLength;
+
+	Mat1b Screenshot;
 	Mat1b DamageScreenshot;
 	Mat1b ChatScreenshot;
 
@@ -93,56 +119,108 @@ int main()
 
 	ImageStore.GeneralSetup();
 
-	//WindowRect TestImage(120, 120, 300, 300, "Images/BossImages/Solak_A.png");
-	//WindowRect WindowRecl(120, 120, 400, 400, "Images/BossImages/Solak_B.png");
+	WindowRect HeaderImg(800, 129, 0, 0, "Images/UI/Head.png");
+	WindowRect SolakImg(800, 574, 0, 129, "Images/UI/SolakLayout.png");
+	WindowRect DmgImg(49, 41, 0, 0, "Images/UI/DamageFound.png");
+	WindowRect NoDmgImg(49, 41, 0, 0, "Images/UI/DamageNotFound.png");
+	WindowRect ChatImg(49, 41, 50, 0, "Images/UI/ChatFound.png");
+	WindowRect NoChatImg(49, 41, 50, 0, "Images/UI/ChatNotFound.png");
 
-	WindowText TextNoDamageArea;
-	WindowText TextFoundDamageArea;
+	//WindowText TextNoDamageArea;
+	//WindowText TextFoundDamageArea;
 	WindowText TextCurrentOverallDamage;
-	WindowText TextNoChatArea;
-	WindowText TextFoundChatArea;
+	//WindowText TextNoChatArea;
+	//WindowText TextFoundChatArea;
 	WindowText TextCurrentBoss;
-
-	TextNoDamageArea.Create(ArialFont, 30, "Could not find Damage Area", { 255, 0, 0, 255 });
-	TextFoundDamageArea.Create(ArialFont, 30, "Found Damage Area", { 0, 255, 0, 255 });
-	TextCurrentOverallDamage.Create(ArialFont, 30, DamageString, { 0, 255, 0, 255 });
-	TextNoChatArea.Create(ArialFont, 30, "Could not find Chat Area", { 255, 0, 0, 255 });
-	TextFoundChatArea.Create(ArialFont, 30, "Found Chat Area", { 0, 255, 0, 255 });
-	TextCurrentBoss.Create(ArialFont, 30, "Current Boss: ", { 0, 255, 0, 255 });
+	WindowText TextSolakDuo;
+	WindowText TextSolakGroup;
+	WindowText TextNoBoss;
+	
+	
+	//TextNoDamageArea.Create(ArialFont, 30, "Could not find Damage Area", { 255, 0, 0, 255 });
+	//TextFoundDamageArea.Create(ArialFont, 30, "Found Damage Area", { 0, 255, 0, 255 });
+	TextCurrentOverallDamage.Create(ArialFont, 20, DamageString, { 0, 255, 0, 255 });
+	//TextNoChatArea.Create(ArialFont, 30, "Could not find Chat Area", { 255, 0, 0, 255 });
+	//TextFoundChatArea.Create(ArialFont, 30, "Found Chat Area", { 0, 255, 0, 255 });
+	TextCurrentBoss.Create(ArialFont, 16, "Current Boss: ", { 255, 255, 255, 255 });
+	TextSolakDuo.Create(ArialFont, 16, "Solak (Duo Mode)", { 255, 255, 255, 255 });
+	TextSolakGroup.Create(ArialFont, 16, "Solak (Group Mode)", { 255, 255, 255, 255 });
+	TextNoBoss.Create(ArialFont, 16, "None", { 255, 255, 255, 255 });
 	
 	while (!window.isClosed())
 	{
 
-		//TestImage.draw();
-		if (ImageStore.GetDamageArea().empty())
+
+		window.pollEvents();
+		window.clear();
+
+		HeaderImg.draw();
+		
+		if (ImageStore.GetDamageArea().empty() || DmgCheck.IsAreaLost())
 		{
-			TextNoDamageArea.display(20, 20);
+			//TextNoDamageArea.display(20, 20);
+			NoDmgImg.draw();
 		}
 		else
 		{
-			TextFoundDamageArea.display(20, 20);
+			//Reset String length to minimum value
+			DamageStringLength = 1;
+			DmgImg.draw();
+			//TextFoundDamageArea.display(20, 20);
 			DamageString = std::to_string(Damage);
-			TextCurrentOverallDamage.display(20, 50, DamageString);
+
+			//Formatting with commas for readability
+			DamageStringLength = DamageString.length() -3;
+			while (DamageStringLength > 0)
+			{
+				DamageString.insert(DamageStringLength, ",");
+				DamageStringLength -= 3;
+			}
+
+			
+
+			TextCurrentOverallDamage.display(20, 60, DamageString);
 			//cout << DamageString;
 		}
 
 		if (ImageStore.GetChatArea().empty())
 		{
-			TextNoChatArea.display(20, 80);
+			NoChatImg.draw();
+			//TextNoChatArea.display(20, 80);
 		}
 		else
 		{
-			TextFoundChatArea.display(20, 80);
+			ChatImg.draw();
+			//TextFoundChatArea.display(20, 80);
 		}
-		TextCurrentBoss.display(20, 110);
 
-		window.pollEvents();
-		window.clear();
+		TextCurrentBoss.display(250, 101);
+		//If statement to determine which boss label to currently display
+		if (SolakActive)
+		{
+			SolakImg.draw();
+			TextSolakDuo.display(350, 101);
+		}
+		else if (SolakGroupActive)
+		{
+			SolakImg.draw();
+			TextSolakGroup.display(350, 101);
+		}
+		else
+		{
+			TextNoBoss.display(350, 101);
+		}
+		
+		
 
 		
-		Screenshot = Screener.GetScreen(); //Grab a screenshot of the desktop
 
-		if (ImageStore.GetDamageArea().empty()) //If there's no damage area recorded
+		StopWatch.ReportTime();
+
+		Screenshot = Screener.GetScreen(); //Grab a screenshot of the desktop
+		
+
+		if (ImageStore.GetDamageArea().empty() || DmgCheck.IsAreaLost()) //If there's no damage area recorded or we have since lost it
 		{
 			//cout << "There was no damage area";
 			//WindowText TextTest("Images/Fonts/arial.ttf", 30, "Damage Area not found", { 255, 0, 0, 255 });
@@ -151,6 +229,7 @@ int main()
 				//cout << "Then we found the damage area";
 				//If we found the damage area, record it to the ImageStore
 				DamageAreaStatus = "Damage area located";
+				DmgCheck.SetAreaLost(false);
 				Rect DamageAreaRect = Rect(TemplateMatch.GetPoint().x, TemplateMatch.GetPoint().y + 23, 100, 10);
 
 				ImageStore.SetDamageArea(DamageAreaRect); //Record the area where the damage is located so that other functions can use it
@@ -162,7 +241,7 @@ int main()
 			if (TemplateMatch.GetMatch(Screenshot, ImageStore.GetChatTag(), 0.80f)) //Look for the chat area
 			{
 				//cout << "We found the chat Area! /n";
-				Rect ChatAreaRect = Rect(TemplateMatch.GetPoint().x, TemplateMatch.GetPoint().y - 23, 300, 40);
+				Rect ChatAreaRect = Rect(TemplateMatch.GetPoint().x, TemplateMatch.GetPoint().y - 35, 300, 52);
 				ImageStore.SetChatArea(ChatAreaRect); //Record the chat area's location
 			}
 		}
@@ -190,7 +269,7 @@ int main()
 			if (!BossActiveCheck(Screenshot))
 			{
 				//cout << "No boss detected exitting early";
-				continue;
+				//continue;
 			}
 			//If we've detected a boss interface, set the starting damage
 			BossStartingDamage = Damage;
@@ -198,8 +277,14 @@ int main()
 		}
 
 		//cout << "Oh shit we found a boss and we doin shit now /n";
-		if (SolakActive)
+		if (SolakActive || SolakGroupActive)
 		{
+			//If the fight hasn't actually started, make sure the player isn't starting a different instance
+			if(!Solak.GetFightStarted())
+			{
+				bool fillerBool;
+				fillerBool = BossActiveCheck(Screenshot);
+			}
 
 			if (!ImageStore.GetChatArea().empty() && !ImageStore.GetDamageArea().empty())
 			{
@@ -208,7 +293,10 @@ int main()
 
 			if (Solak.GetFightEnded())
 			{
+				Solak.SaveFight();
+				Solak.Reset();
 				//SolakActive = false;
+				//SolakGroupActive = false;
 				//BossActive = false;
 			}
 		}
@@ -223,23 +311,27 @@ int main()
 		}
 		
 
-
+		
 		DamageLastFrame = Damage;
 
 
 
 		//window.clear();
 
-
+		Screenshot.release();
+		DamageScreenshot.release();
+		ChatScreenshot.release();
 
 
 		//key = waitKey(1000/fps);
-		
 
+		
 		
 		
 	}
 	
+	_CrtDumpMemoryLeaks();
+
 	return 0;
 }
 

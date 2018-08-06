@@ -1,6 +1,5 @@
 #ifndef IMAGESETUP_H
 #define IMAGESETUP_H
-
 #include<opencv2\opencv.hpp>
 #include <Windows.h>
 #include<stdint.h>
@@ -29,27 +28,35 @@ public:
 	void DmgSetup();
 	void SolakSetup();
 
-	Mat1b GetDamageTag() { return m_DamageTagGray; };
-	Mat1b GetChatTag() { return m_ChatTagGray; };
-	Mat1b GetSolakTagA() { return m_SolakTagAGray; };
-	Mat1b GetSolakTagB() { return m_SolakTagBGray; };
-	Mat1b GetDamageNull() { return m_DmgValNullGray; };
-	Mat1b GetDamage(int Value) { return m_DmgValGray[Value]; };
+	Mat1b& GetDamageTag() { return m_DamageTagGray; };
+	Mat1b& GetChatTag() { return m_ChatTagGray; };
+	Mat1b& GetSolakTagA() { return m_SolakTagAGray; };
+	Mat1b& GetSolakTagB() { return m_SolakTagBGray; };
+	Mat1b& GetDamageNull() { return m_DmgValNullGray; };
+	Mat1b& GetDamage(int Value) { return m_DmgValGray[Value]; };
 
-	Mat1b GetSolakBar() { return m_SolakBarGray; };
-	Mat1b GetSolakCore() { return m_SolakCoreGray; };
-	Mat1b GetSolakCoreEnd() { return m_SolakCoreEndGray; };
-	Mat1b GetSolakStart() { return m_SolakStartGray; };
-	Mat1b GetSolakLeftArm() { return m_SolakLeftArmGray; };
-	Mat1b GetSolakRightArm() { return m_SolakRightArmGray; };
-	Mat1b GetSolakLeftLeg() { return m_SolakLeftLegGray; };
-	Mat1b GetSolakRightLeg() { return m_SolakRightLegGray; };
-	Mat1b GetSolakP2Start() { return m_SolakP2StartGray; };
-	Mat1b GetSolakP3Start() { return m_SolakP3StartGray; };
-	Mat1b GetSolakP4Start() { return m_SolakP4StartGray; };
-	Mat1b GetSolakMindDebuff() { return m_SolakMindDebuffGray; };
-	Mat1b GetSolakEnd() { return m_SolakEndGray; };
+	Mat1b& GetSolakBar() { return m_SolakBarGray; };
+	Mat1b& GetSolakCore() { return m_SolakCoreGray; };
+	Mat1b& GetSolakCoreEnd() { return m_SolakCoreEndGray; };
+	Mat1b& GetSolakStart() { return m_SolakStartGray; };
+	Mat1b& GetSolakLeftArm() { return m_SolakLeftArmGray; };
+	Mat1b& GetSolakRightArm() { return m_SolakRightArmGray; };
+	Mat1b& GetSolakLeftLeg() { return m_SolakLeftLegGray; };
+	Mat1b& GetSolakRightLeg() { return m_SolakRightLegGray; };
+	Mat1b& GetSolakP2Start() { return m_SolakP2StartGray; };
+	Mat1b& GetSolakP3Start() { return m_SolakP3StartGray; };
+	Mat1b& GetSolakP4Start() { return m_SolakP4StartGray; };
+	Mat1b& GetSolakMindDebuff() { return m_SolakMindDebuffGray; };
+	Mat1b& GetSolakEnd() { return m_SolakEndGray; };
+	Mat1b& GetSolakBomb() { return m_SolakBombGray; };
+	Mat1b& GetPlayerDeath() { return m_PlayerDeathGray; };
 
+	Mat3b& GetChatFound() { return m_ChatFound; };
+	Mat3b& GetChatNotFound() { return m_ChatNotFound; };
+	Mat3b& GetDamageFound() { return m_DamageFound; };
+	Mat3b& GetDamageNotFound() { return m_DamageNotFound; };
+	Mat3b& GetHeader() { return m_Header; };
+	Mat3b& GetSolakLayout() { return m_SolakLayout; };
 
 	Rect GetDamageArea() { return m_DamageArea; };
 	Rect GetChatArea() { return m_ChatArea; };
@@ -61,6 +68,13 @@ private:
 
 	Rect m_DamageArea;
 	Rect m_ChatArea;
+
+	Mat3b m_DamageFound;
+	Mat3b m_DamageNotFound;
+	Mat3b m_ChatFound;
+	Mat3b m_ChatNotFound;
+	Mat3b m_Header;
+	Mat3b m_SolakLayout;
 
 	Mat3b m_SolakTagA;
 	Mat3b m_SolakTagB;
@@ -104,7 +118,11 @@ private:
 	Mat1b m_SolakEndGray;
 	Mat3b m_SolakMindDebuff;
 	Mat1b m_SolakMindDebuffGray;
+	Mat3b m_SolakBomb;
+	Mat1b m_SolakBombGray;
 
+	Mat3b m_PlayerDeath;
+	Mat1b m_PlayerDeathGray;
 	
 
 

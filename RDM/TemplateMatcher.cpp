@@ -8,12 +8,13 @@ TemplateMatcher::~TemplateMatcher()
 {
 }
 
-bool TemplateMatcher::GetMatch(Mat1b Source, Mat1b Template, float Thresh)
+
+bool TemplateMatcher::GetMatch(Mat1b& Source, Mat1b& Template, float Thresh)
 {
 	
 	matchTemplate(Source, Template, m_MatchResult, TM_CCOEFF_NORMED);
-	
-	
+
+
 	minMaxLoc(m_MatchResult, NULL, NULL, NULL, &m_MatchPoint);
 
 	if (m_MatchResult(m_MatchPoint) > Thresh)
@@ -24,12 +25,14 @@ bool TemplateMatcher::GetMatch(Mat1b Source, Mat1b Template, float Thresh)
 		//Draw the red rectangle
 		//rectangle(Source, Rect(m_MatchPoint, Template.size()), Scalar(0, 0, 255), 2);
 		//imshow("Matched Location", Source(m_DamageArea));
+		m_MatchResult.release();
 		return true;
 	}
-	
-	
+
+	m_MatchResult.release();
+	//Source.release();
+	//Template.release();
 	return false;
-	
 }
 
 

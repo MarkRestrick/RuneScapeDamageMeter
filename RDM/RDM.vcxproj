@@ -20,21 +20,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DamageCheck.cpp" />
+    <ClCompile Include="DataHandler.cpp" />
     <ClCompile Include="ImageSetup.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScreenCapture.cpp" />
     <ClCompile Include="SolakModule.cpp" />
     <ClCompile Include="TemplateMatcher.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowRect.cpp" />
     <ClCompile Include="WindowText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DamageCheck.h" />
+    <ClInclude Include="DataHandler.h" />
     <ClInclude Include="ImageSetup.h" />
     <ClInclude Include="ScreenCapture.h" />
     <ClInclude Include="SolakModule.h" />
     <ClInclude Include="TemplateMatcher.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowRect.h" />
     <ClInclude Include="WindowText.h" />
@@ -128,6 +132,7 @@
       <EntryPointSymbol>
       </EntryPointSymbol>
       <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

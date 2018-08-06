@@ -1,6 +1,7 @@
 #ifndef SCREENCAPTURE_H
 #define SCREENCAPTURE_H
 
+
 #include<opencv2\opencv.hpp>
 #include <Windows.h>
 #include<stdint.h>

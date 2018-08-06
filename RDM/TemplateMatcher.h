@@ -1,6 +1,7 @@
 #ifndef TEMPLATEMATCHER_H
 #define TEMPLATEMATCHER_H
 
+
 #include<opencv2\opencv.hpp>
 #include <Windows.h>
 #include<stdint.h>
@@ -17,7 +18,8 @@ public:
 	TemplateMatcher();
 	~TemplateMatcher();
 
-	bool GetMatch(Mat1b Source, Mat1b Template, float Thresh); //This function captures a screenshot, converts it to a mat file and returns it.
+	bool GetMatch(Mat1b& Source, Mat1b& Template, float Thresh); //This function captures a screenshot, converts it to a mat file and returns it.
+	
 
 	Point GetPoint() { return m_MatchPoint; };
 

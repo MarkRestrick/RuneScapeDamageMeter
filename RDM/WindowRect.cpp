@@ -38,6 +38,10 @@ WindowRect::WindowRect(int w, int h, int x, int y, const std::string & image_pat
 	SDL_FreeSurface(surface);
 }
 
+WindowRect::WindowRect()
+{
+}
+
 WindowRect::~WindowRect()
 {
 	SDL_DestroyTexture(m_Texture);
@@ -61,6 +65,28 @@ void WindowRect::draw() const
 
 	
 	
+}
+
+void WindowRect::initialise(int w, int h, int x, int y, const std::string & image_path)
+{
+	m_Width = w;
+	m_Height = h;
+	m_x = x;
+	m_y = y;
+
+	auto surface = IMG_Load(image_path.c_str());
+	if (!surface)
+	{
+		std::cout << "Failed to create surface \n";
+	}
+
+	m_Texture = SDL_CreateTextureFromSurface(Window::renderer, surface);
+	if (!m_Texture)
+	{
+		std::cout << "Failed to create texture \n";
+	}
+
+	SDL_FreeSurface(surface);
 }
 
 

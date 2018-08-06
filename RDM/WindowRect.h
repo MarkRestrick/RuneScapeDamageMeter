@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "Window.h"
 #include <string>
 
@@ -7,8 +8,10 @@ class WindowRect {
 public:
 	WindowRect(int w, int h, int x, int y, int r, int g, int b, int a);
 	WindowRect(int w, int h, int x, int y, const std::string &image_path);
+	WindowRect();
 	~WindowRect();
 	void draw() const;
+	void initialise(int w, int h, int x, int y, const std::string &image_path);
 
 
 private:
