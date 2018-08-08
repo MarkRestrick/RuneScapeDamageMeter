@@ -9,7 +9,7 @@ WindowText::WindowText()
 WindowText::~WindowText()
 {
 	SDL_DestroyTexture(m_TextTexture);
-	TTF_CloseFont(font);
+	
 	
 }
 
@@ -54,6 +54,7 @@ void WindowText::Create(std::string font_path, int font_size, std::string messag
 		m_TexFail = false;
 	}
 	SDL_QueryTexture(m_TextTexture, nullptr, nullptr, &m_TextRect.w, &m_TextRect.h);
+	TTF_CloseFont(font);
 }
 
 SDL_Texture *WindowText::loadFont(std::string font_path, int font_size, std::string message_text, const SDL_Color & color)
