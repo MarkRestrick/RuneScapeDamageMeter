@@ -1,2 +1,0 @@
-﻿  main.cpp
-opencv_highgui330d.lib(opencv_highgui330d.dll) : fatal error LNK1112: module machine type 'x64' conflicts with target machine type 'X86'
