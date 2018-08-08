@@ -43,18 +43,22 @@ void DataHandler::ReplaceString(string fileName, string stringToReplace)
 
 string DataHandler::GrabFile(string fileName)
 {
+	//cout << "We're in grab file baby!" << endl;
 	inFile.open(fileName);
+	//cout << "We opened " << fileName << endl;
 
 	if (inFile.fail())
 	{
 		cerr << "Error opening file!";
 	}
 
+
 	string itemToReturn;
 
 	while (!inFile.eof())
 	{
 		inFile >> itemToReturn;
+		//cout << "It contained " << itemToReturn << endl;
 	}
 
 	inFile.close();
@@ -65,7 +69,7 @@ string DataHandler::GrabFile(string fileName)
 
 void DataHandler::Start()
 {
-
+	/*
 	inFile.open("Data/SolakDuo.txt");
 
 	//Check for error
@@ -87,4 +91,5 @@ void DataHandler::Start()
 	//cout << counter << " items found! " << endl;
 
 	inFile.close();
+	*/
 }

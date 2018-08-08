@@ -39,6 +39,11 @@ void WindowText::Create(std::string font_path, int font_size, std::string messag
 	m_FontSize = font_size;
 	m_Color = color;
 
+	if (m_TextTexture != NULL)
+	{
+		SDL_DestroyTexture(m_TextTexture);
+	}
+
 	m_TextTexture = loadFont(font_path, font_size, message_text, color);
 	if (m_TextTexture == NULL)
 	{

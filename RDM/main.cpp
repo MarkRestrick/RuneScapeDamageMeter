@@ -16,9 +16,8 @@
 #include <string>
 #include "DataHandler.h"
 #include "Timer.h"
-#define _CRTDBG_MAP_ALLOC  
-#include <stdlib.h>  
-#include <crtdbg.h>
+#include "TelosModule.h"
+
 
 
 
@@ -31,7 +30,7 @@ const int SCREEN_HEIGHT = 300;
 SDL_Window* window = NULL;
 //SDL_Surface* screen = NULL;
 
-string WindowName = "RuneScape Damage Meter (Solak Prototype)";
+string WindowName = "RuneScape Damage Meter (Beta 1.0)";
 
 
 using namespace cv;
@@ -42,10 +41,13 @@ const int fps = 40;
 bool BossActive = false;
 bool SolakActive = false;
 bool SolakGroupActive = false;
+bool TelosActive = false;
+bool fillerBool;
 
 ImageSetup ImageStore;
 TemplateMatcher TemplateMatch;
 SolakModule Solak;
+TelosModule Telos;
 
 
 bool BossActiveCheck(Mat1b Screenshot)
@@ -55,22 +57,37 @@ bool BossActiveCheck(Mat1b Screenshot)
 		BossActive = true;
 		SolakActive = false;
 		SolakGroupActive = true;
-		cout << "We're gonna fight Solak! \n";
+		TelosActive = false;
+		Telos.SetActive(false);
+		//cout << "We're gonna fight Solak! \n";
 		Solak.Reset();
 		Solak.SetDuoActive(false);
 		return true;
 	}
-	if (TemplateMatch.GetMatch(Screenshot, ImageStore.GetSolakTagB(), 0.9f))
+	else if (TemplateMatch.GetMatch(Screenshot, ImageStore.GetSolakTagB(), 0.9f))
 	{
 		BossActive = true;
 		SolakActive = true;
 		SolakGroupActive = false;
-		cout << "We're gonna fight Solak! \n";
+		TelosActive = false;
+		Telos.SetActive(false);
+		//cout << "We're gonna fight Solak! \n";
 		Solak.Reset();
 		Solak.SetDuoActive(true);
 		return true;
 	}
-
+	else if (TemplateMatch.GetMatch(Screenshot, ImageStore.GetTelosTag(), 0.9f))
+	{
+		BossActive = true;
+		SolakActive = false;
+		SolakGroupActive = false;
+		TelosActive = true;
+		//cout << "We're gonna fight Solak! \n";
+		Telos.Reset();
+		Telos.SetActive(true);
+		return true;
+	}
+	
 	return false;
 }
 
@@ -78,10 +95,10 @@ bool BossActiveCheck(Mat1b Screenshot)
 
 int main()
 {
-	/*
+	
 	HWND hwnd = GetConsoleWindow();
 	ShowWindow(hwnd, 0);
-	*/
+	
 	//Hides the console window :D
 
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -121,6 +138,7 @@ int main()
 
 	WindowRect HeaderImg(800, 129, 0, 0, "Images/UI/Head.png");
 	WindowRect SolakImg(800, 574, 0, 129, "Images/UI/SolakLayout.png");
+	WindowRect TelosImg(800, 574, 0, 129, "Images/UI/TelosLayout.png");
 	WindowRect DmgImg(49, 41, 0, 0, "Images/UI/DamageFound.png");
 	WindowRect NoDmgImg(49, 41, 0, 0, "Images/UI/DamageNotFound.png");
 	WindowRect ChatImg(49, 41, 50, 0, "Images/UI/ChatFound.png");
@@ -135,6 +153,7 @@ int main()
 	WindowText TextSolakDuo;
 	WindowText TextSolakGroup;
 	WindowText TextNoBoss;
+	WindowText TextTelos;
 	
 	
 	//TextNoDamageArea.Create(ArialFont, 30, "Could not find Damage Area", { 255, 0, 0, 255 });
@@ -145,6 +164,7 @@ int main()
 	TextCurrentBoss.Create(ArialFont, 16, "Current Boss: ", { 255, 255, 255, 255 });
 	TextSolakDuo.Create(ArialFont, 16, "Solak (Duo Mode)", { 255, 255, 255, 255 });
 	TextSolakGroup.Create(ArialFont, 16, "Solak (Group Mode)", { 255, 255, 255, 255 });
+	TextTelos.Create(ArialFont, 16, "Telos, the Warden", { 255, 255, 255, 255 });
 	TextNoBoss.Create(ArialFont, 16, "None", { 255, 255, 255, 255 });
 	
 	while (!window.isClosed())
@@ -164,25 +184,26 @@ int main()
 		else
 		{
 			//Reset String length to minimum value
-			DamageStringLength = 1;
+			//DamageStringLength = 1;
 			DmgImg.draw();
 			//TextFoundDamageArea.display(20, 20);
-			DamageString = std::to_string(Damage);
+			//DamageString = std::to_string(Damage);
 
 			//Formatting with commas for readability
+			/*
 			DamageStringLength = DamageString.length() -3;
 			while (DamageStringLength > 0)
 			{
 				DamageString.insert(DamageStringLength, ",");
 				DamageStringLength -= 3;
 			}
-
+			*/
 			
 
-			TextCurrentOverallDamage.display(20, 60, DamageString);
+			//TextCurrentOverallDamage.display(20, 60, DamageString);
 			//cout << DamageString;
 		}
-
+		
 		if (ImageStore.GetChatArea().empty())
 		{
 			NoChatImg.draw();
@@ -193,8 +214,9 @@ int main()
 			ChatImg.draw();
 			//TextFoundChatArea.display(20, 80);
 		}
-
+		
 		TextCurrentBoss.display(250, 101);
+		
 		//If statement to determine which boss label to currently display
 		if (SolakActive)
 		{
@@ -206,6 +228,11 @@ int main()
 			SolakImg.draw();
 			TextSolakGroup.display(350, 101);
 		}
+		else if (TelosActive)
+		{
+			TelosImg.draw();
+			TextTelos.display(350, 101);
+		}
 		else
 		{
 			TextNoBoss.display(350, 101);
@@ -215,27 +242,34 @@ int main()
 
 		
 
-		StopWatch.ReportTime();
+		//StopWatch.ReportTime();
 
 		Screenshot = Screener.GetScreen(); //Grab a screenshot of the desktop
 		
-
+		
 		if (ImageStore.GetDamageArea().empty() || DmgCheck.IsAreaLost()) //If there's no damage area recorded or we have since lost it
 		{
 			//cout << "There was no damage area";
 			//WindowText TextTest("Images/Fonts/arial.ttf", 30, "Damage Area not found", { 255, 0, 0, 255 });
+			
 			if (TemplateMatch.GetMatch(Screenshot, ImageStore.GetDamageTag(), 0.7f)) //Look for the damage area
 			{
+				
 				//cout << "Then we found the damage area";
 				//If we found the damage area, record it to the ImageStore
 				DamageAreaStatus = "Damage area located";
 				DmgCheck.SetAreaLost(false);
+				
 				Rect DamageAreaRect = Rect(TemplateMatch.GetPoint().x, TemplateMatch.GetPoint().y + 23, 100, 10);
-
+				
 				ImageStore.SetDamageArea(DamageAreaRect); //Record the area where the damage is located so that other functions can use it
+				
 			}
+			
 		}
 
+		
+		
 		if (ImageStore.GetChatArea().empty()) //If there's no chat area recorded
 		{
 			if (TemplateMatch.GetMatch(Screenshot, ImageStore.GetChatTag(), 0.80f)) //Look for the chat area
@@ -246,7 +280,7 @@ int main()
 			}
 		}
 		
-
+		
 
 		//key = waitKey(1000 / fps);
 		if (!ImageStore.GetDamageArea().empty())
@@ -282,7 +316,6 @@ int main()
 			//If the fight hasn't actually started, make sure the player isn't starting a different instance
 			if(!Solak.GetFightStarted())
 			{
-				bool fillerBool;
 				fillerBool = BossActiveCheck(Screenshot);
 			}
 
@@ -301,26 +334,40 @@ int main()
 			}
 		}
 
-
-		
-		
-		
-		if (!ImageStore.GetDamageArea().empty())
+		if (TelosActive)
 		{
-			//imshow("Desktop", DamageScreenshot);
+			if (!Telos.GetFightStarted())
+			{
+				fillerBool = BossActiveCheck(Screenshot);
+			}
+
+			if (!ImageStore.GetChatArea().empty() && !ImageStore.GetDamageArea().empty())
+			{
+				Telos.Update(Screenshot, Damage, ChatScreenshot);
+			}
+
+			if (Telos.GetFightEnded())
+			{
+				Telos.SaveFight();
+				Telos.Reset();
+
+			}
 		}
 		
+		
+		
+	
 
 		
-		DamageLastFrame = Damage;
+		//DamageLastFrame = Damage;
 
 
 
 		//window.clear();
 
-		Screenshot.release();
-		DamageScreenshot.release();
-		ChatScreenshot.release();
+		//Screenshot.release();
+		//DamageScreenshot.release();
+		//ChatScreenshot.release();
 
 
 		//key = waitKey(1000/fps);
@@ -330,7 +377,7 @@ int main()
 		
 	}
 	
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 
 	return 0;
 }

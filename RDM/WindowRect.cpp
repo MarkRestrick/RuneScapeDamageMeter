@@ -4,7 +4,7 @@
 
 WindowRect::WindowRect(int w, int h, int x, int y, int r, int g, int b, int a)
 {
-
+	
 	m_Width = w;
 	m_Height = h;
 	m_x = x;
@@ -13,11 +13,12 @@ WindowRect::WindowRect(int w, int h, int x, int y, int r, int g, int b, int a)
 	m_g = g;
 	m_b = b;
 	m_a = a;
-
+	
 }
 
 WindowRect::WindowRect(int w, int h, int x, int y, const std::string & image_path)
 {
+	
 	m_Width = w;
 	m_Height = h;
 	m_x = x;
@@ -36,6 +37,7 @@ WindowRect::WindowRect(int w, int h, int x, int y, const std::string & image_pat
 	}
 
 	SDL_FreeSurface(surface);
+	
 }
 
 WindowRect::WindowRect()
@@ -49,6 +51,7 @@ WindowRect::~WindowRect()
 
 void WindowRect::draw() const
 {
+	
 	SDL_Rect rect = { m_x, m_y, m_Width, m_Height };
 
 	if (m_Texture)

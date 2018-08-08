@@ -44,6 +44,11 @@ void ImageSetup::GeneralSetup()
 	m_SolakTagA.release();
 	m_SolakTagB.release();
 
+	//Telos menu tag
+	m_TelosTag = imread("Images/BossImages/Telos.png");
+	cvtColor(m_TelosTag, m_TelosTagGray, COLOR_BGR2GRAY);
+	m_TelosTag.release();
+
 	//User Interface Images
 	m_DamageFound = imread("Images/UI/DamageFound.png");
 	m_DamageNotFound = imread("Images/UI/DamageNotFound.png");
@@ -148,4 +153,52 @@ void ImageSetup::SolakSetup()
 	cvtColor(m_PlayerDeath, m_PlayerDeathGray, COLOR_BGR2GRAY);
 	m_PlayerDeath.release();
 
+}
+
+void ImageSetup::TelosSetup()
+{
+	m_TelosTarget = imread("Images/TelosImages/TelosTarget.png");
+	cvtColor(m_TelosTarget, m_TelosTargetGray, COLOR_BGR2GRAY);
+	m_TelosTarget.release();
+
+	m_TelosPhase1 = imread("Images/TelosImages/Phase1.png");
+	cvtColor(m_TelosPhase1, m_TelosPhase1Gray, COLOR_BGR2GRAY);
+	m_TelosPhase1.release();
+
+	m_TelosPhase2 = imread("Images/TelosImages/Phase2.png");
+	cvtColor(m_TelosPhase2, m_TelosPhase2Gray, COLOR_BGR2GRAY);
+	m_TelosPhase2.release();
+
+	m_TelosPhase3 = imread("Images/TelosImages/Phase3.png");
+	cvtColor(m_TelosPhase3, m_TelosPhase3Gray, COLOR_BGR2GRAY);
+	m_TelosPhase3.release();
+
+	m_TelosPhase4 = imread("Images/TelosImages/Phase4.png");
+	cvtColor(m_TelosPhase4, m_TelosPhase4Gray, COLOR_BGR2GRAY);
+	m_TelosPhase4.release();
+
+	m_TelosPhase5 = imread("Images/TelosImages/Phase5.png");
+	cvtColor(m_TelosPhase5, m_TelosPhase5Gray, COLOR_BGR2GRAY);
+	m_TelosPhase5.release();
+
+	m_TelosFightEnd = imread("Images/TelosImages/FightEnd.png");
+	cvtColor(m_TelosFightEnd, m_TelosFightEndGray, COLOR_BGR2GRAY);
+	m_TelosFightEnd.release();
+
+	m_PlayerDeath = imread("Images/Death.png");
+	cvtColor(m_PlayerDeath, m_PlayerDeathGray, COLOR_BGR2GRAY);
+	m_PlayerDeath.release();
+}
+
+void ImageSetup::SetDamageArea(Rect & DamageArea)
+{
+
+	m_DamageArea = cv::Rect(DamageArea.x, DamageArea.y, DamageArea.width, DamageArea.height);
+
+}
+
+void ImageSetup::SetChatArea(Rect& ChatArea)
+{
+	m_ChatArea = ChatArea;
+	
 }

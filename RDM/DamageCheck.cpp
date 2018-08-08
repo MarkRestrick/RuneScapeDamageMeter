@@ -82,7 +82,7 @@ unsigned int DamageCheck::GetDamage(Mat1b& Source)
 		m_LostDamageArea = false;
 		break;
 	case 9:
-		Millions(Source);
+		TenMillions(Source);
 		m_LostDamageArea = false;
 		break;
 	case 10:
@@ -117,7 +117,7 @@ void DamageCheck::Units(Mat1b& Source)
 	m_TotalDamage += 1 * IdentifyNumber(m_DmgCrops[0]);
 
 
-	cout << "Total damage is: " << m_TotalDamage << "\n";
+	//cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
 void DamageCheck::Tens(Mat1b& Source)
@@ -139,7 +139,7 @@ void DamageCheck::Tens(Mat1b& Source)
 
 	if (m_DamageFramesCounter > 5)
 	{
-		cout << "Total damage is: " << m_TotalDamage << "\n";
+		//cout << "Total damage is: " << m_TotalDamage << "\n";
 	}
 	
 }
@@ -166,7 +166,7 @@ void DamageCheck::Hundreds(Mat1b& Source)
 	m_TotalDamage += 1* IdentifyNumber(m_DmgCrops[2]);
 
 
-	cout << "Total damage is: " << m_TotalDamage << "\n";
+	//cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
 void DamageCheck::Thousands(Mat1b& Source)
@@ -196,7 +196,7 @@ void DamageCheck::Thousands(Mat1b& Source)
 	m_TotalDamage += 1 * IdentifyNumber(m_DmgCrops[3]);
 
 
-	cout << "Total damage is: " << m_TotalDamage << "\n";
+	//cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
 void DamageCheck::TenThousands(Mat1b& Source)
@@ -228,7 +228,7 @@ void DamageCheck::TenThousands(Mat1b& Source)
 	m_TotalDamage += 1* IdentifyNumber(m_DmgCrops[4]);
 
 
-	cout << "Total damage is: " << m_TotalDamage << "\n";
+	//cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
 void DamageCheck::HundredThousands(Mat1b& Source)
@@ -310,9 +310,13 @@ void DamageCheck::Millions(Mat1b& Source)
 	if (m_DamageFramesCounter > m_DamageFramesLimit)
 	{
 		m_DamageFramesCounter = 0;
-		cout << "Total damage is: " << m_TotalDamage << "\n";
+		//cout << "Total damage is: " << m_TotalDamage << "\n";
 	}
 	Source.release();
+	for (int z = 0; z < 7; z++)
+	{
+		m_DmgCrops[z].release();
+	}
 
 }
 
@@ -404,7 +408,7 @@ void DamageCheck::HundredMillions(Mat1b& Source)
 	m_TotalDamage += 10 * IdentifyNumber(m_DmgCrops[7]);
 	m_TotalDamage += 1 * IdentifyNumber(m_DmgCrops[8]);
 
-	cout << "Total damage is: " << m_TotalDamage << "\n";
+	//cout << "Total damage is: " << m_TotalDamage << "\n";
 }
 
 int DamageCheck::IdentifyNumber(Mat1b& NumberImg)

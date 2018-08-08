@@ -26,6 +26,8 @@ void Timer::ReportTime()
 
 double Timer::GetTime()
 {
+	m_EndTime = steady_clock::now();
 	m_TimeSpan = double(duration_cast <seconds> (m_EndTime - m_StartTime).count());
+	//cout << int(m_TimeSpan) << endl;
 	return m_TimeSpan;
 }

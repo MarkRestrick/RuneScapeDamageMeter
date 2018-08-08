@@ -27,11 +27,13 @@ public:
 	void GeneralSetup();
 	void DmgSetup();
 	void SolakSetup();
+	void TelosSetup();
 
 	Mat1b& GetDamageTag() { return m_DamageTagGray; };
 	Mat1b& GetChatTag() { return m_ChatTagGray; };
 	Mat1b& GetSolakTagA() { return m_SolakTagAGray; };
 	Mat1b& GetSolakTagB() { return m_SolakTagBGray; };
+	Mat1b& GetTelosTag() { return m_TelosTagGray; };
 	Mat1b& GetDamageNull() { return m_DmgValNullGray; };
 	Mat1b& GetDamage(int Value) { return m_DmgValGray[Value]; };
 
@@ -51,6 +53,14 @@ public:
 	Mat1b& GetSolakBomb() { return m_SolakBombGray; };
 	Mat1b& GetPlayerDeath() { return m_PlayerDeathGray; };
 
+	Mat1b& GetTelosTarget() { return m_TelosTargetGray; };
+	Mat1b& GetTelosPhase1() { return m_TelosPhase1Gray; };
+	Mat1b& GetTelosPhase2() { return m_TelosPhase2Gray; };
+	Mat1b& GetTelosPhase3() { return m_TelosPhase3Gray; };
+	Mat1b& GetTelosPhase4() { return m_TelosPhase4Gray; };
+	Mat1b& GetTelosPhase5() { return m_TelosPhase5Gray; };
+	Mat1b& GetTelosFightEnd() { return m_TelosFightEndGray; };
+
 	Mat3b& GetChatFound() { return m_ChatFound; };
 	Mat3b& GetChatNotFound() { return m_ChatNotFound; };
 	Mat3b& GetDamageFound() { return m_DamageFound; };
@@ -60,8 +70,8 @@ public:
 
 	Rect GetDamageArea() { return m_DamageArea; };
 	Rect GetChatArea() { return m_ChatArea; };
-	void SetDamageArea(Rect DamageArea) { m_DamageArea = DamageArea; };
-	void SetChatArea(Rect ChatArea) { m_ChatArea = ChatArea; };
+	void SetDamageArea(Rect& DamageArea);
+	void SetChatArea(Rect& ChatArea);
 
 
 private:
@@ -80,6 +90,8 @@ private:
 	Mat3b m_SolakTagB;
 	Mat1b m_SolakTagAGray;
 	Mat1b m_SolakTagBGray;
+	Mat3b m_TelosTag;
+	Mat1b m_TelosTagGray;
 
 	Mat3b m_DamageTag;
 	Mat1b m_DamageTagGray;
@@ -120,6 +132,22 @@ private:
 	Mat1b m_SolakMindDebuffGray;
 	Mat3b m_SolakBomb;
 	Mat1b m_SolakBombGray;
+
+	Mat3b m_TelosTarget;
+	Mat1b m_TelosTargetGray;
+	Mat3b m_TelosPhase1;
+	Mat1b m_TelosPhase1Gray;
+	Mat3b m_TelosPhase2;
+	Mat1b m_TelosPhase2Gray;
+	Mat3b m_TelosPhase3;
+	Mat1b m_TelosPhase3Gray;
+	Mat3b m_TelosPhase4;
+	Mat1b m_TelosPhase4Gray;
+	Mat3b m_TelosPhase5;
+	Mat1b m_TelosPhase5Gray;
+	Mat3b m_TelosFightEnd;
+	Mat1b m_TelosFightEndGray;
+	
 
 	Mat3b m_PlayerDeath;
 	Mat1b m_PlayerDeathGray;

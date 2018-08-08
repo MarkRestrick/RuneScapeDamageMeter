@@ -9,6 +9,8 @@ SolakModule::SolakModule()
 	{
 		m_FirstTime = false;
 		SolakImages.SolakSetup();
+		m_SolakBestString = m_SolakData.GrabFile("Data/SolakDuoBest.txt");
+		//cout << "\n The value fo the grabbed string was: " << m_SolakBestString << "\n";
 		
 		string ArialFont = "Images/Fonts/arial.ttf";
 
@@ -56,8 +58,7 @@ SolakModule::SolakModule()
 		TextSolakTeamActive.Create(ArialFont, 30, "Solak (7 Man)", { 0, 255, 0, 255 });
 		*/
 
-		m_SolakBestString = m_SolakData.GrabFile("Data/SolakDuoBest.txt");
-		cout << "\n" << m_SolakBestString << "\n";
+
 		
 	}
 	//std::string FontLoc = "Images/Fonts/arial.ttf";
@@ -86,7 +87,7 @@ void SolakModule::Update(Mat1b& Screenshot, unsigned int Damage, Mat1b& ChatScre
 {
 	if (TextSolakReportHeader.GetTexFail())
 	{
-		std::cout << "WE HAD TO REMAKE THE TEXTURES";
+		//std::cout << "WE HAD TO REMAKE THE TEXTURES";
 		TextSolakReportHeader.Create("Images/Fonts/arial.ttf", 30, "Damage Report for Solak", { 255, 255, 255, 255 });
 		//TextSolakReportHeader2.Create("Images/Fonts/arial.ttf", 30, "Ally Damage in Red", { 255, 0, 0, 255 });
 		//TextSolakTotalDamage.Create("Images/Fonts/arial.ttf", 30, "Total Damage Dealt:", { 255, 255, 255, 255 });
@@ -160,7 +161,7 @@ void SolakModule::Update(Mat1b& Screenshot, unsigned int Damage, Mat1b& ChatScre
 		if (SolakMatch.GetMatch(ChatScreen, SolakImages.GetPlayerDeath(), 0.82f))
 		{
 			m_FightEnded = true;
-			cout << "We ended the fight";
+			//cout << "We ended the fight";
 			m_DeathCheckCounter = 0;
 		}
 	}
@@ -195,6 +196,8 @@ void SolakModule::Update(Mat1b& Screenshot, unsigned int Damage, Mat1b& ChatScre
 	if (m_Phase1Active && !m_FightStarted && SolakMatch.GetMatch(ChatScreen, SolakImages.GetSolakStart(), 0.82f))
 	{
 		m_FightStarted = true;
+		m_SolakBestString = m_SolakData.GrabFile("Data/SolakDuoBest.txt");
+		//cout << "\n" << m_SolakBestString << "\n";
 		WipeBarsAndValues();
 		ParseBest();
 		m_SolakTimer.Start();
@@ -983,7 +986,7 @@ void SolakModule::ParseBest()
 	m_StrAllyP3Dmg = m_SolakBestString.substr(S3S + 1, S4S - S3S - 1);
 	m_StrAllyP4Dmg = m_SolakBestString.substr(S4S + 1, DMGS - S4S - 1);
 	m_StrBestDmg = m_SolakBestString.substr(DMGS + 1);
-	cout << m_StrBestDmg;
+	cout << m_StrBestDmg << endl;
 
 	//Convert the strings to integers
 	m_AllyP1Dmg[0] = atoi(m_StrAllyP1Dmg[0].c_str());
@@ -1050,6 +1053,7 @@ void SolakModule::ParseBest()
 
 void SolakModule::CompareBest()
 {
+	cout << m_BestCompareDamage << endl;
 	if (m_BestCompareDamage > m_AllyBestDmg)
 	{
 		SaveBest();
@@ -1058,6 +1062,7 @@ void SolakModule::CompareBest()
 
 void SolakModule::SaveBest()
 {
+	//cout << "We tried to save the fight we just fucking suck at it" << endl;
 	string fightString;
 	int totalDamage = m_P1DamageTotal + m_ArmsDamageTotal + m_LegsDamageTotal + m_CoreDamageTotal + m_P2StormDamage + m_P2Damage + m_P3Damage;
 	string savedDamage = to_string(totalDamage);
