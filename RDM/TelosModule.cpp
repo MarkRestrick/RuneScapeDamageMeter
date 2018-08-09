@@ -160,7 +160,7 @@ void TelosModule::Update(Mat1b& Screenshot, unsigned int Damage, Mat1b& ChatScre
 		m_Phase1Active = true;
 	}
 
-	if (m_Phase1Active && !m_FightStarted && TelosMatch.GetMatch(Screenshot, TelosImages.GetTelosTarget(), 0.82f))
+	if (m_Phase1Active && !m_FightStarted && TelosMatch.GetMatch(Screenshot, TelosImages.GetTelosTarget(), 0.95f))
 	{
 		m_FightStarted = true;
 		m_TelosBestString = m_TelosData.GrabFile("Data/TelosBest.txt");
